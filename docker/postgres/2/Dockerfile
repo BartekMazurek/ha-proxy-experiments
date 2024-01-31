@@ -1,0 +1,9 @@
+FROM postgres:15
+
+ENV POSTGRES_USER proxy
+ENV POSTGRES_PASSWORD proxy
+ENV POSTGRES_DB proxy_db
+
+EXPOSE 5432
+
+CMD ["postgres"]
