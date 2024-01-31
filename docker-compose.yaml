@@ -1,0 +1,150 @@
+version: '3'
+
+services:
+
+    php1:
+        container_name: php1
+        environment:
+            app_id: backend1
+        build:
+            context: .
+            dockerfile: docker/php/1/Dockerfile
+        restart: on-failure
+        volumes:
+            - .:/var/www/app
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.2
+
+    nginx1:
+        container_name: nginx1
+        build:
+            context: .
+            dockerfile: ./docker/nginx/1/Dockerfile
+        volumes:
+            - .:/var/www/app
+        depends_on:
+            - php1
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.3
+
+    php2:
+        container_name: php2
+        environment:
+            app_id: backend2
+        build:
+            context: .
+            dockerfile: docker/php/2/Dockerfile
+        restart: on-failure
+        volumes:
+            - .:/var/www/app
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.4
+
+    nginx2:
+        container_name: nginx2
+        build:
+            context: .
+            dockerfile: ./docker/nginx/2/Dockerfile
+        volumes:
+            - .:/var/www/app
+        depends_on:
+            - php2
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.5
+
+    php3:
+        container_name: php3
+        environment:
+            app_id: admin1
+        build:
+            context: .
+            dockerfile: docker/php/3/Dockerfile
+        restart: on-failure
+        volumes:
+            - .:/var/www/app
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.6
+
+    nginx3:
+        container_name: nginx3
+        build:
+            context: .
+            dockerfile: ./docker/nginx/3/Dockerfile
+        volumes:
+            - .:/var/www/app
+        depends_on:
+            - php3
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.7
+
+    php4:
+        container_name: php4
+        environment:
+            app_id: admin2
+        build:
+            context: .
+            dockerfile: docker/php/4/Dockerfile
+        restart: on-failure
+        volumes:
+            - .:/var/www/app
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.8
+
+    nginx4:
+        container_name: nginx4
+        build:
+            context: .
+            dockerfile: ./docker/nginx/4/Dockerfile
+        volumes:
+            - .:/var/www/app
+        depends_on:
+            - php4
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.9
+
+    postgres1:
+        container_name: postgres1
+        build:
+            context: .
+            dockerfile: docker/postgres/1/Dockerfile
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.10
+
+    postgres2:
+        container_name: postgres2
+        build:
+            context: .
+            dockerfile: docker/postgres/2/Dockerfile
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.11
+
+    haproxy:
+        container_name: haproxy
+        build:
+            context: .
+            dockerfile: docker/haproxy/Dockerfile
+        restart: on-failure
+        ports:
+            - 80:80
+            - 81:81
+            - 5432:5432
+        networks:
+            ha-network:
+                ipv4_address: 172.20.0.12
+
+networks:
+    ha-network:
+        driver: bridge
+        ipam:
+            config:
+                -   subnet: 172.20.0.0/24
