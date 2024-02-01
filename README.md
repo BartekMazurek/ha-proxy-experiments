@@ -2,6 +2,8 @@
 
 > Simple HA-PROXY scenario with load balanced multiple instances of PHP, NGINX & POSTGRES
 
+![haproxy](haproxy.png)
+
 ## 1 - How to setup
 > docker-compose up -d
 
